@@ -1,0 +1,499 @@
+{
+  "overlap": {
+    "n_seen": 751,
+    "share_seen": 0.12623970415195832,
+    "acc_seen": 0.9400798934753661,
+    "acc_novel": 0.9168911119661408,
+    "macro_f1_novel": 0.8151406933773923
+  },
+  "deployed_model": "Linear SVM",
+  "n_train": 16912,
+  "n_test": 5949,
+  "n_features": 27956,
+  "train_counts": {
+    "Neutral / Positive": 12552,
+    "Derogatory": 3220,
+    "Negative attitude": 1140
+  },
+  "test_counts": {
+    "Neutral / Positive": 4410,
+    "Derogatory": 1120,
+    "Negative attitude": 419
+  },
+  "glove_coverage": 0.8693766992450046,
+  "results": {
+    "K-NN": {
+      "accuracy": 0.8561102706337199,
+      "macro_f1": 0.6950848748372365,
+      "per_class": {
+        "Neutral / Positive": {
+          "precision": 0.8503321610003908,
+          "recall": 0.9868480725623583,
+          "f1-score": 0.9135180520570949,
+          "support": 4410.0
+        },
+        "Negative attitude": {
+          "precision": 0.8351648351648352,
+          "recall": 0.3627684964200477,
+          "f1-score": 0.5058236272878536,
+          "support": 419.0
+        },
+        "Derogatory": {
+          "precision": 0.9075500770416025,
+          "recall": 0.5258928571428572,
+          "f1-score": 0.6659129451667609,
+          "support": 1120.0
+        }
+      },
+      "hostile_binary": {
+        "precision": 0.9302045728038508,
+        "recall": 0.50227420402859
+      },
+      "confusion_matrix": [
+        [
+          4352,
+          16,
+          42
+        ],
+        [
+          249,
+          152,
+          18
+        ],
+        [
+          517,
+          14,
+          589
+        ]
+      ],
+      "val_macro_f1": 0.6565070002455,
+      "best_param": "101",
+      "features": "TF-IDF",
+      "latency_ms": 29.1730044099999
+    },
+    "Naive Bayes": {
+      "accuracy": 0.8850226928895613,
+      "macro_f1": 0.7654599746168244,
+      "per_class": {
+        "Neutral / Positive": {
+          "precision": 0.9152021089630932,
+          "recall": 0.944671201814059,
+          "f1-score": 0.9297031912519527,
+          "support": 4410.0
+        },
+        "Negative attitude": {
+          "precision": 0.67003367003367,
+          "recall": 0.47494033412887826,
+          "f1-score": 0.5558659217877095,
+          "support": 419.0
+        },
+        "Derogatory": {
+          "precision": 0.8181818181818182,
+          "recall": 0.8035714285714286,
+          "f1-score": 0.8108108108108109,
+          "support": 1120.0
+        }
+      },
+      "hostile_binary": {
+        "precision": 0.8253400143163923,
+        "recall": 0.7491877842755036
+      },
+      "confusion_matrix": [
+        [
+          4166,
+          79,
+          165
+        ],
+        [
+          185,
+          199,
+          35
+        ],
+        [
+          201,
+          19,
+          900
+        ]
+      ],
+      "val_macro_f1": 0.7460157317990935,
+      "best_param": "0.3",
+      "features": "TF-IDF",
+      "latency_ms": 1.4979330833330096
+    },
+    "Logistic Regression": {
+      "accuracy": 0.8972936628004706,
+      "macro_f1": 0.7986239555976543,
+      "per_class": {
+        "Neutral / Positive": {
+          "precision": 0.9493258949325895,
+          "recall": 0.9260770975056689,
+          "f1-score": 0.9375573921028466,
+          "support": 4410.0
+        },
+        "Negative attitude": {
+          "precision": 0.5339805825242718,
+          "recall": 0.6563245823389021,
+          "f1-score": 0.588865096359743,
+          "support": 419.0
+        },
+        "Derogatory": {
+          "precision": 0.8648409893992933,
+          "recall": 0.8741071428571429,
+          "f1-score": 0.8694493783303731,
+          "support": 1120.0
+        }
+      },
+      "hostile_binary": {
+        "precision": 0.8020643594414086,
+        "recall": 0.8583495776478233
+      },
+      "confusion_matrix": [
+        [
+          4084,
+          201,
+          125
+        ],
+        [
+          116,
+          275,
+          28
+        ],
+        [
+          102,
+          39,
+          979
+        ]
+      ],
+      "val_macro_f1": 0.7899836355504961,
+      "best_param": "1",
+      "features": "TF-IDF",
+      "latency_ms": 1.362521519999973
+    },
+    "Linear SVM": {
+      "accuracy": 0.9198184568835098,
+      "macro_f1": 0.8219772349196058,
+      "per_class": {
+        "Neutral / Positive": {
+          "precision": 0.9250535331905781,
+          "recall": 0.9795918367346939,
+          "f1-score": 0.9515418502202643,
+          "support": 4410.0
+        },
+        "Negative attitude": {
+          "precision": 0.8663967611336032,
+          "recall": 0.5107398568019093,
+          "f1-score": 0.6426426426426426,
+          "support": 419.0
+        },
+        "Derogatory": {
+          "precision": 0.9089147286821705,
+          "recall": 0.8375,
+          "f1-score": 0.8717472118959108,
+          "support": 1120.0
+        }
+      },
+      "hostile_binary": {
+        "precision": 0.9296325254104769,
+        "recall": 0.7725795971410007
+      },
+      "confusion_matrix": [
+        [
+          4320,
+          21,
+          69
+        ],
+        [
+          180,
+          214,
+          25
+        ],
+        [
+          170,
+          12,
+          938
+        ]
+      ],
+      "val_macro_f1": 0.7924983314539861,
+      "best_param": "0.1",
+      "features": "TF-IDF",
+      "latency_ms": 2.248609686666517
+    },
+    "Random Forest": {
+      "accuracy": 0.9141032106236342,
+      "macro_f1": 0.8151193320256392,
+      "per_class": {
+        "Neutral / Positive": {
+          "precision": 0.9190455901150405,
+          "recall": 0.9782312925170068,
+          "f1-score": 0.9477152899824253,
+          "support": 4410.0
+        },
+        "Negative attitude": {
+          "precision": 0.8233082706766918,
+          "recall": 0.522673031026253,
+          "f1-score": 0.6394160583941606,
+          "support": 419.0
+        },
+        "Derogatory": {
+          "precision": 0.9150657229524772,
+          "recall": 0.8080357142857143,
+          "f1-score": 0.8582266477003319,
+          "support": 1120.0
+        }
+      },
+      "hostile_binary": {
+        "precision": 0.9235059760956176,
+        "recall": 0.7530864197530864
+      },
+      "confusion_matrix": [
+        [
+          4314,
+          30,
+          66
+        ],
+        [
+          182,
+          219,
+          18
+        ],
+        [
+          198,
+          17,
+          905
+        ]
+      ],
+      "val_macro_f1": 0.7752496292643829,
+      "best_param": "gini",
+      "features": "TF-IDF",
+      "latency_ms": 10.10234783333317
+    },
+    "MLP + GloVe": {
+      "accuracy": 0.8381240544629349,
+      "macro_f1": 0.683329842624628,
+      "per_class": {
+        "Neutral / Positive": {
+          "precision": 0.8476570289132602,
+          "recall": 0.9639455782312926,
+          "f1-score": 0.9020689655172414,
+          "support": 4410.0
+        },
+        "Negative attitude": {
+          "precision": 0.8617021276595744,
+          "recall": 0.38663484486873506,
+          "f1-score": 0.5337726523887973,
+          "support": 419.0
+        },
+        "Derogatory": {
+          "precision": 0.7680965147453083,
+          "recall": 0.5116071428571428,
+          "f1-score": 0.6141479099678456,
+          "support": 1120.0
+        }
+      },
+      "hostile_binary": {
+        "precision": 0.8297644539614561,
+        "recall": 0.5035737491877843
+      },
+      "confusion_matrix": [
+        [
+          4251,
+          13,
+          146
+        ],
+        [
+          230,
+          162,
+          27
+        ],
+        [
+          534,
+          13,
+          573
+        ]
+      ],
+      "val_macro_f1": 0.6634441019351021,
+      "best_param": "(128, 64)",
+      "features": "GloVe-50 (87% token coverage)",
+      "latency_ms": 0.17228180666658469
+    }
+  },
+  "errors": [
+    [
+      "wtf am ? use blink",
+      "Negative attitude",
+      "Neutral / Positive"
+    ],
+    [
+      "ahahaha i love masturbating",
+      "Derogatory",
+      "Neutral / Positive"
+    ],
+    [
+      "did you buy an account?",
+      "Negative attitude",
+      "Neutral / Positive"
+    ],
+    [
+      "oh fuc kno solo ganked by io",
+      "Derogatory",
+      "Neutral / Positive"
+    ],
+    [
+      "little insect for me",
+      "Derogatory",
+      "Neutral / Positive"
+    ],
+    [
+      "i want to tap that ass for real",
+      "Neutral / Positive",
+      "Derogatory"
+    ],
+    [
+      "bully sf like bull blind kid",
+      "Negative attitude",
+      "Neutral / Positive"
+    ],
+    [
+      "typical brain dead russian disconnect after draft no surprise i hope america bombs entire russia",
+      "Neutral / Positive",
+      "Derogatory"
+    ],
+    [
+      "cumback",
+      "Derogatory",
+      "Neutral / Positive"
+    ],
+    [
+      "stop def idiots alyansov nasmotrelis?",
+      "Neutral / Positive",
+      "Derogatory"
+    ],
+    [
+      "u rich 1k",
+      "Negative attitude",
+      "Neutral / Positive"
+    ],
+    [
+      "and you can fuck off too",
+      "Neutral / Positive",
+      "Derogatory"
+    ],
+    [
+      "as long as pa 025",
+      "Negative attitude",
+      "Neutral / Positive"
+    ],
+    [
+      "fk me",
+      "Neutral / Positive",
+      "Derogatory"
+    ],
+    [
+      "mid and carry too fail la hahahaha",
+      "Negative attitude",
+      "Neutral / Positive"
+    ]
+  ],
+  "top_features": {
+    "Negative attitude": [
+      [
+        "ez",
+        3.7749255658870737
+      ],
+      [
+        "0",
+        2.2058423410032932
+      ],
+      [
+        "1k",
+        2.1621813645666492
+      ],
+      [
+        "mad",
+        1.9360235352598665
+      ],
+      [
+        "fucking ez",
+        1.8718928443292
+      ],
+      [
+        "2k",
+        1.8548401736709026
+      ],
+      [
+        "rocket",
+        1.8236016419390115
+      ],
+      [
+        "like you",
+        1.8139368591701652
+      ],
+      [
+        "kids",
+        1.7869628057196723
+      ],
+      [
+        "kid",
+        1.7423205430656252
+      ],
+      [
+        "worth",
+        1.6570676840228442
+      ],
+      [
+        "izi",
+        1.553297054328254
+      ]
+    ],
+    "Derogatory": [
+      [
+        "shit",
+        3.0716620385047486
+      ],
+      [
+        "noob",
+        2.8218715335264295
+      ],
+      [
+        "trash",
+        2.2873110964091725
+      ],
+      [
+        "cunt",
+        2.2078300265352495
+      ],
+      [
+        "rape",
+        2.173626362892419
+      ],
+      [
+        "idiot",
+        2.16867752123236
+      ],
+      [
+        "gay",
+        2.140045416848117
+      ],
+      [
+        "ass",
+        2.0418230386302785
+      ],
+      [
+        "stupid",
+        1.8764907319515147
+      ],
+      [
+        "son",
+        1.826346214496701
+      ],
+      [
+        "dick",
+        1.7706304305213925
+      ],
+      [
+        "bitch",
+        1.7559840266902127
+      ]
+    ]
+  }
+}

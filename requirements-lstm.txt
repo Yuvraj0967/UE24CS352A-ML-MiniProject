@@ -1,0 +1,3 @@
+# Only needed for the optional Bi-LSTM + GloVe experiment (python train_model.py --lstm)
+-r requirements.txt
+torch

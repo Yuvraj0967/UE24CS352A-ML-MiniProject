@@ -1,37 +1,26 @@
-import os
-import pickle
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.naive_bayes import MultinomialNB
+"""One-command training entry point.
 
-# 1. Sample Gaming Sentiment Dataset
-messages = [
-    "gg EZ trash team uninstall", "you are terrible at this game", "report feeder bot",
-    "great job team well played", "nice play dude gg", "good game everyone",
-    "going mid now", "defend top tower", "buying item wait", "be right back",
-    "stop dying feed team", "uninstall game useless player", "clutch win nice work"
-]
+    python train_model.py          # download data, train K-NN / NB / LogReg, save the best model
+    python train_model.py --lstm   # additionally train the Bi-LSTM + GloVe model (needs PyTorch)
 
-labels = [
-    "Derogatory / Toxic", "Derogatory / Toxic", "Derogatory / Toxic",
-    "Positive", "Positive", "Positive",
-    "Neutral", "Neutral", "Neutral", "Neutral",
-    "Derogatory / Toxic", "Derogatory / Toxic", "Positive"
-]
+Artifacts are written to models/ (model.pkl and vectorizer.pkl are used by demo.py).
+"""
+import argparse
 
-# 2. Vectorize Text
-vectorizer = TfidfVectorizer()
-X = vectorizer.fit_transform(messages)
+from src import train_baselines
 
-# 3. Train Classifier
-model = MultinomialNB()
-model.fit(X, labels)
 
-# 4. Save Model Artifacts
-os.makedirs("models", exist_ok=True)
-with open("models/vectorizer.pkl", "wb") as f:
-    pickle.dump(vectorizer, f)
+def main():
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("--lstm", action="store_true", help="also train the Bi-LSTM (requires torch)")
+    args = parser.parse_args()
 
-with open("models/model.pkl", "wb") as f:
-    pickle.dump(model, f)
+    train_baselines.main()
+    print("SUCCESS: model.pkl and vectorizer.pkl saved inside 'models/'")
+    if args.lstm:
+        from src import train_lstm
+        train_lstm.main()
 
-print("SUCCESS: Model and Vectorizer saved inside 'models/' folder!")
+
+if __name__ == "__main__":
+    main()

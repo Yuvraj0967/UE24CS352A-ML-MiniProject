@@ -1,49 +1,123 @@
-import streamlit as st
-import pickle
+"""Streamlit demo - PvP chat sentiment & toxicity classifier.
+
+Run:  streamlit run demo.py
+"""
+import json
 import os
+import pickle
+import sys
 
-st.set_page_config(page_title="PvP Chat Sentiment Classifier", page_icon="🎮")
+import pandas as pd
+import streamlit as st
 
-st.title("PvP Game Chat Sentiment & Toxicity Classifier")
-st.subheader("UE24CS352A ML Mini-Project | SRN 514 & 547")
-st.markdown("---")
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from src.preprocess import clean_text  # noqa: E402  (same cleaning as training)
 
-# Load model and vectorizer
+st.set_page_config(page_title="PvP Chat Classifier", page_icon="🎮", layout="centered")
+
+STYLE = {  # class -> (emoji, headline)
+    "Derogatory": ("🚫", "Hater - derogatory language"),
+    "Negative attitude": ("😒", "Troll - negative attitude"),
+    "Neutral / Positive": ("🤝", "Teammate - neutral or positive"),
+}
+EXAMPLES = [
+    "gg ez trash team uninstall",
+    "nice save, gg wp",
+    "mid is open, push top",
+    "ez mid",
+    "thanks for the heal",
+    "shut up and uninstall",
+]
+
+
 @st.cache_resource
 def load_artifacts():
-    model_path = os.path.join("models", "model.pkl")
-    vectorizer_path = os.path.join("models", "vectorizer.pkl")
-    
-    with open(model_path, "rb") as f:
+    base = os.path.join(os.path.dirname(os.path.abspath(__file__)), "models")
+    with open(os.path.join(base, "model.pkl"), "rb") as f:
         model = pickle.load(f)
-    with open(vectorizer_path, "rb") as f:
+    with open(os.path.join(base, "vectorizer.pkl"), "rb") as f:
         vectorizer = pickle.load(f)
-        
-    return model, vectorizer
+    metrics_path = os.path.join(base, "metrics_baselines.json")
+    metrics = json.load(open(metrics_path)) if os.path.exists(metrics_path) else None
+    return model, vectorizer, metrics
 
-model, vectorizer = load_artifacts()
 
-# User interface input
-user_input = st.text_input("Enter a PvP Chat Message:", "gg EZ trash team uninstall")
+try:
+    model, vectorizer, metrics = load_artifacts()
+except FileNotFoundError:
+    st.error("Model files not found. Run `python train_model.py` first (see README).")
+    st.stop()
 
-if st.button("Analyze Sentiment"):
-    if user_input.strip():
-        # Preprocess input and predict
-        vec_input = vectorizer.transform([user_input])
-        prediction = model.predict(vec_input)[0]
-        probs = model.predict_proba(vec_input)[0]
-        confidence = max(probs) * 100
+# ---------- header ----------
+st.title("🎮 Trolls, Haters, or Teammates?")
+st.caption("Classifying sentiment in PvP game chat · UE24CS352A ML Mini-Project · SRN 514 & 547")
 
-        st.write(f"**Input Message:** *\"{user_input}\"*")
-        
-        # Display styled output based on predicted class
-        if prediction == "Derogatory / Toxic":
-            st.error(f"**Predicted Class:** {prediction}")
-        elif prediction == "Positive":
-            st.success(f"**Predicted Class:** {prediction}")
+tab_demo, tab_results, tab_about = st.tabs(["Live demo", "Model results", "About"])
+
+# ---------- live demo ----------
+with tab_demo:
+    st.write("Type a chat message or pick an example, and the model labels it as "
+             "**Neutral / Positive**, **Negative attitude** or **Derogatory**.")
+    cols = st.columns(3)
+    for i, ex in enumerate(EXAMPLES):
+        if cols[i % 3].button(ex, key=f"ex{i}"):
+            st.session_state["msg"] = ex
+    message = st.text_input("Chat message", key="msg", value=st.session_state.get("msg", EXAMPLES[0]))
+
+    if st.button("Analyze", type="primary"):
+        if not message.strip():
+            st.warning("Please enter a chat message.")
         else:
-            st.info(f"**Predicted Class:** {prediction}")
-            
-        st.info(f"**Confidence Score:** {confidence:.1f}%")
+            X = vectorizer.transform([clean_text(message)])
+            probs = model.predict_proba(X)[0]
+            order = probs.argsort()[::-1]
+            top = model.classes_[order[0]]
+            emoji, headline = STYLE.get(top, ("", top))
+            box = {"Derogatory": st.error, "Negative attitude": st.warning}.get(top, st.success)
+            box(f"{emoji} **{headline}**  ({top}) - confidence {probs[order[0]]:.0%}")
+
+            st.bar_chart(pd.DataFrame({"probability": probs}, index=model.classes_))
+            if probs[order[0]] < 0.5:
+                st.caption("Low confidence - the classes overlap for this message.")
+
+    st.caption("Messages are lower-cased and cleaned the same way as the training data.")
+
+# ---------- results ----------
+with tab_results:
+    if metrics is None:
+        st.info("Run `python train_model.py` to generate evaluation metrics.")
     else:
-        st.warning("Please enter a valid chat message.")
+        st.write(f"Held-out test set: **{metrics['n_test']:,}** Dota 2 chat messages "
+                 f"(trained on {metrics['n_train']:,}). Deployed model: **{metrics['deployed_model']}**.")
+        rows = [{"Model": n, "Accuracy": r["accuracy"], "Macro-F1": r["macro_f1"],
+                 "Features": r.get("features", ""), "Latency (ms/msg)": r["latency_ms"]}
+                for n, r in metrics["results"].items()]
+        st.dataframe(pd.DataFrame(rows).style.format(
+            {"Accuracy": "{:.3f}", "Macro-F1": "{:.3f}", "Latency (ms/msg)": "{:.2f}"}),
+            hide_index=True)
+        fig_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "docs", "figures")
+        c1, c2 = st.columns(2)
+        for col, name in zip((c1, c2), ("confusion_matrix.png", "model_comparison.png")):
+            path = os.path.join(fig_dir, name)
+            if os.path.exists(path):
+                col.image(path)
+
+# ---------- about ----------
+with tab_about:
+    st.markdown(
+        """
+**Problem.** Toxic chat hurts player retention, but banter like "gg" can be friendly *or* sarcastic.
+Following the Stanford CS229 paper this project is based on, each message is classified as
+**Neutral / Positive**, **Negative attitude** or **Derogatory**.
+
+**Data.** [CONDA](https://github.com/usydnlp/CONDA) - Dota 2 in-game chat annotated by humans.
+Explicit toxicity -> *Derogatory*, implicit toxicity -> *Negative attitude*, other chatter ->
+*Neutral / Positive* (an approximation of the paper's hand labels, see README).
+
+**Method.** TF-IDF (word 1-2 grams + character 2-5 grams) -> K-NN, Naive Bayes, Logistic Regression,
+Linear SVM, Random Forest; plus a feedforward network on averaged GloVe vectors.
+
+**Limitations.** Trained on Dota 2 only; sarcasm and context ("gg" after a loss) are hard;
+negative-attitude messages are the hardest class; not a substitute for human moderation.
+        """
+    )
